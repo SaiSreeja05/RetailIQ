@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — Retail Intelligence & Analytics Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-title">RetailIQ</div>
+      <span class="brand-badge">INTELLIGENCE PLATFORM</span>
+    </div>
+
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearchInput" class="search-input" placeholder="Smart Search products, customers, transactions, warehouses...">
+      <div id="searchDropdown" class="search-dropdown"></div>
+    </div>
+
+    <div class="header-status">
+      <span>●</span> Persistent CSV Active
+    </div>
+  </header>
+
+  <!-- Body Layout -->
+  <div class="app-body">
+
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+      <div class="nav-label">Navigation</div>
+      <a class="nav-item active" data-view="dashboard"><span>📊</span> Dashboard</a>
+      <a class="nav-item" data-view="products"><span>🏷️</span> Products</a>
+      <a class="nav-item" data-view="customers"><span>👥</span> Customers</a>
+      <a class="nav-item" data-view="transactions"><span>💳</span> Transactions</a>
+      <a class="nav-item" data-view="warehouses"><span>🏢</span> Warehouses</a>
+      <a class="nav-item" data-view="reviews"><span>⭐</span> Reviews</a>
+      
+      <div class="nav-divider"></div>
+      <div class="nav-label">Intelligence & DSA</div>
+      <a class="nav-item" data-view="explorer"><span>🔍</span> Data Explorer</a>
+      <a class="nav-item" data-view="analytics"><span>📈</span> Analytics</a>
+      <a class="nav-item" data-view="algorithms"><span>⚡</span> Algorithms Lab</a>
+      <a class="nav-item" data-view="data-management"><span>💾</span> Data Management</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-content">
+
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">RetailIQ — Turn Retail Data Into Decisions</h1>
+            <p class="view-subtitle">Live Intelligence & Operational Health Dashboard • Connected to Persistent CSV Storage</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="dashboardKpis"></div>
+
+        <div class="card">
+          <div class="card-header">Real-time Retail Insights (Calculated from Live Data)</div>
+          <div class="insights-container" id="dashboardInsights"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div class="card">
+            <div class="card-header">Sales Revenue Trend (Timeline)</div>
+            <canvas id="salesTrendChart" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header">Revenue by Category</div>
+            <canvas id="categoryRevenueChart" height="220"></canvas>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="card">
+            <div class="card-header">Top Purchased Products</div>
+            <div class="table-wrapper">
+              <table id="topProductsTable">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Qty Sold</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">Low Stock Inventory Alerts (≤ 15 units)</div>
+            <div class="table-wrapper">
+              <table id="lowStockTable">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Code</th>
+                    <th>Stock Left</th>
+                    <th>Unit Price</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PRODUCTS VIEW -->
+      <section id="view-products" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Product Catalog & Intelligence</h1>
+            <p class="view-subtitle">Manage retail inventory, pricing, catalog metadata, and live item performance</p>
+          </div>
+          <button class="btn btn-primary" onclick="openProductModal()">+ Add New Product</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <input type="text" id="productSearchInput" class="form-input" style="width: 280px;" placeholder="🔍 Filter by name, code, or description...">
+          <select id="productCategoryFilter" class="form-select" style="width: 180px;">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="split-view">
+          <div class="table-wrapper">
+            <table id="productsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="detail-drawer" id="productDetailDrawer">
+            <div class="card-header">Product Intelligence</div>
+            <p style="color: var(--text-muted); font-size: 13px;">Select any product row to inspect sales analytics, inventory valuation, and customer feedback.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CUSTOMERS VIEW -->
+      <section id="view-customers" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Customer Directory & Account Profiles</h1>
+            <p class="view-subtitle">Manage customer accounts, lifetime value, and purchase history</p>
+          </div>
+          <button class="btn btn-primary" onclick="openCustomerModal()">+ Add New Customer</button>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="customerSearchInput" class="form-input" style="width: 320px;" placeholder="🔍 Filter by name, email, phone, city...">
+        </div>
+
+        <div class="split-view">
+          <div class="table-wrapper">
+            <table id="customersTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>City / Address</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="detail-drawer" id="customerDetailDrawer">
+            <div class="card-header">Customer Profile</div>
+            <p style="color: var(--text-muted); font-size: 13px;">Select a customer to view their lifetime spend, order history, and reviews.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. TRANSACTIONS VIEW -->
+      <section id="view-transactions" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Sales Ledger & Orders</h1>
+            <p class="view-subtitle">Track orders, calculate revenues, and record new purchases</p>
+          </div>
+          <button class="btn btn-primary" onclick="openTransactionModal()">+ Record New Transaction</button>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="transactionSearchInput" class="form-input" style="width: 360px;" placeholder="🔍 Search by Txn ID, date, customer ID, product ID...">
+        </div>
+
+        <div class="table-wrapper">
+          <table id="transactionsTable">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. WAREHOUSES VIEW -->
+      <section id="view-warehouses" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Warehouse Logistics & Storage Network</h1>
+            <p class="view-subtitle">Monitor regional distribution centers and storage capacity</p>
+          </div>
+          <button class="btn btn-primary" onclick="openWarehouseModal()">+ Add New Warehouse</button>
+        </div>
+
+        <div class="kpi-grid" id="warehouseCardsGrid" style="margin-bottom: 24px;"></div>
+
+        <div class="card">
+          <div class="card-header">Warehouse Directory</div>
+          <div class="table-wrapper">
+            <table id="warehousesTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Warehouse Name</th>
+                  <th>Location</th>
+                  <th>Capacity (Units)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. REVIEWS VIEW -->
+      <section id="view-reviews" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Customer Reviews & Sentiment Intelligence</h1>
+            <p class="view-subtitle">Analyze satisfaction ratings and extract feature sentiment</p>
+          </div>
+          <button class="btn btn-primary" onclick="openReviewModal()">+ Add Customer Review</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Aho-Corasick NLP Sentiment & Keyword Extraction</div>
+          <div id="reviewKeywordChips" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;"></div>
+          <div id="reviewRatingSpread" style="display: flex; gap: 12px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Customer Reviews Table</div>
+          <div class="table-wrapper">
+            <table id="reviewsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>Customer</th>
+                  <th>Rating</th>
+                  <th>Customer Feedback</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. DATA EXPLORER VIEW -->
+      <section id="view-explorer" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Unified Retail Data Explorer</h1>
+            <p class="view-subtitle">Inspect, filter, search, and manage all persistent retail entities</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button class="btn btn-primary explorer-tab" data-entity="products">Products</button>
+          <button class="btn btn-secondary explorer-tab" data-entity="customers">Customers</button>
+          <button class="btn btn-secondary explorer-tab" data-entity="transactions">Transactions</button>
+          <button class="btn btn-secondary explorer-tab" data-entity="reviews">Reviews</button>
+          <button class="btn btn-secondary explorer-tab" data-entity="warehouses">Warehouses</button>
+        </div>
+
+        <div class="card" id="explorerContentCard">
+          <div class="table-wrapper" id="explorerTableContainer"></div>
+        </div>
+      </section>
+
+      <!-- 8. ANALYTICS VIEW -->
+      <section id="view-analytics" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Executive Analytics & Financial Intelligence</h1>
+            <p class="view-subtitle">Multi-dimensional analytics computed from live transaction records</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="analyticsKpis"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div class="card">
+            <div class="card-header">Revenue Timeline (Line Chart)</div>
+            <canvas id="analyticsTrendChart" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header">Category Share (Bar Chart)</div>
+            <canvas id="analyticsCategoryChart" height="220"></canvas>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="card">
+            <div class="card-header">Review Ratings Distribution</div>
+            <canvas id="analyticsRatingChart" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header">Product Distribution by Category</div>
+            <canvas id="analyticsProductDistChart" height="220"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. ALGORITHMS LAB VIEW -->
+      <section id="view-algorithms" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Algorithms Lab & DSA Interactive Studio</h1>
+            <p class="view-subtitle">Run and visualize Dynamic Programming, String Algorithms, and Suffix Structures on live data</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 18px;">
+          <button class="btn btn-primary algo-nav-btn active" data-algo="dp">1. Dynamic Programming</button>
+          <button class="btn btn-secondary algo-nav-btn" data-algo="string">2. String Algorithms</button>
+          <button class="btn btn-secondary algo-nav-btn" data-algo="suffix">3. Suffix Structures</button>
+        </div>
+
+        <!-- DP SUITE -->
+        <div id="algo-pane-dp" class="algo-pane">
+          <!-- Bitmask DP -->
+          <div class="card">
+            <div class="card-header">0/1 Knapsack via Bitmask DP — Retail Bundle Optimizer (Real CSV Data)</div>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 14px;">Calculates the mathematically optimal combination of live catalog items to maximize customer satisfaction within a budget.</p>
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+              <label style="font-weight: 600; font-size: 13px;">Target Budget (Rs.):</label>
+              <input type="range" id="bmBudgetSlider" min="20000" max="250000" step="5000" value="100000" style="width: 260px;">
+              <span id="bmBudgetValue" style="font-weight: 700; color: var(--olive-primary); font-size: 15px;">Rs. 100,000</span>
+              <button class="btn btn-primary" onclick="runBitmaskDP()">Run Bitmask Optimizer</button>
+            </div>
+            <div id="bmResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="bmTitleResult"></div>
+              <p id="bmExplResult" style="font-size: 13px; margin-bottom: 10px;"></p>
+              <div id="bmSelectedItems" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+          </div>
+
+          <!-- Levenshtein Distance -->
+          <div class="card">
+            <div class="card-header">Levenshtein Distance — Typo Tolerance & Fuzzy Search Engine</div>
+            <div style="display: flex; gap: 12px; margin-bottom: 14px;">
+              <input type="text" id="levS1" class="form-input" value="ipohne" placeholder="Query 1 (typo)" style="width: 180px;">
+              <input type="text" id="levS2" class="form-input" value="iPhone 15" placeholder="Query 2 (target)" style="width: 180px;">
+              <button class="btn btn-primary" onclick="runLevenshtein()">Compute Edit Distance</button>
+            </div>
+            <div id="levResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="levTitleResult"></div>
+              <p id="levExplResult" style="font-size: 13px;"></p>
+            </div>
+          </div>
+
+          <!-- Matrix Chain -->
+          <div class="card">
+            <div class="card-header">Matrix Chain Optimization — Supply Chain Restock Multi-Stage Cost</div>
+            <div style="display: flex; gap: 12px; margin-bottom: 14px;">
+              <input type="text" id="mcmDims" class="form-input" value="10, 20, 30, 40, 30" placeholder="Stage dimensions" style="width: 240px;">
+              <button class="btn btn-primary" onclick="runMatrixChain()">Optimize Parenthesization</button>
+            </div>
+            <div id="mcmResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="mcmTitleResult"></div>
+              <p id="mcmExplResult" style="font-size: 13px;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- STRING SUITE -->
+        <div id="algo-pane-string" class="algo-pane" style="display: none;">
+          <!-- Aho-Corasick -->
+          <div class="card">
+            <div class="card-header">Aho-Corasick Automaton — Review Feature & Sentiment Mining</div>
+            <div class="form-group">
+              <label class="form-label">Review Text:</label>
+              <textarea id="acText" class="form-textarea" rows="2">The iPhone Pro has an excellent camera and smooth performance with titanium design and long battery.</textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target Keywords (comma-separated):</label>
+              <input type="text" id="acKeywords" class="form-input" value="camera, performance, titanium, battery, smooth, design, excellent">
+            </div>
+            <button class="btn btn-primary" onclick="runAhoCorasick()">Run Aho-Corasick Scanner</button>
+            <div id="acResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-top: 14px; display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="acTitleResult"></div>
+              <p id="acExplResult" style="font-size: 13px; margin-bottom: 10px;"></p>
+              <div id="acMatchedChips" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+          </div>
+
+          <!-- KMP, Rabin-Karp, Z -->
+          <div class="card">
+            <div class="card-header">Exact Pattern Matching: KMP vs Rabin-Karp vs Z-Algorithm</div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 14px;">
+              <input type="text" id="pmText" class="form-input" value="Apple iPhone 15 Pro with titanium design and advanced camera" placeholder="Corpus text">
+              <input type="text" id="pmPattern" class="form-input" value="titanium" placeholder="Pattern">
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button class="btn btn-secondary" onclick="runPatternMatch('kmp')">Run KMP</button>
+              <button class="btn btn-secondary" onclick="runPatternMatch('rabinkarp')">Run Rabin-Karp</button>
+              <button class="btn btn-secondary" onclick="runPatternMatch('zfunction')">Run Z-Algorithm</button>
+            </div>
+            <div id="pmResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="pmTitleResult"></div>
+              <p id="pmExplResult" style="font-size: 13px;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUFFIX SUITE -->
+        <div id="algo-pane-suffix" class="algo-pane" style="display: none;">
+          <!-- Suffix Array -->
+          <div class="card">
+            <div class="card-header">Suffix Array & Kasai LCP Array Construction</div>
+            <div style="display: flex; gap: 12px; margin-bottom: 14px;">
+              <input type="text" id="saText" class="form-input" value="retailiq" placeholder="Corpus text" style="width: 220px;">
+              <button class="btn btn-primary" onclick="runSuffixArray()">Construct Suffix & LCP Array</button>
+            </div>
+            <div id="saResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <p id="saExplResult" style="font-size: 13px; margin-bottom: 10px;"></p>
+              <div class="table-wrapper">
+                <table id="saTable">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Suffix Position</th>
+                      <th>LCP Value</th>
+                      <th>Suffix String</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suffix Automaton / Tree -->
+          <div class="card">
+            <div class="card-header">Suffix Automaton (DAWG) & Suffix Tree Querying</div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 14px;">
+              <input type="text" id="samText" class="form-input" value="electronics_catalog_inventory" placeholder="Corpus text">
+              <input type="text" id="samPattern" class="form-input" value="catalog" placeholder="Pattern">
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button class="btn btn-secondary" onclick="runSuffixQuery('suffixautomaton')">Query Suffix Automaton</button>
+              <button class="btn btn-secondary" onclick="runSuffixQuery('suffixtree')">Query Suffix Tree</button>
+            </div>
+            <div id="samResultBox" style="background: var(--olive-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px;" id="samTitleResult"></div>
+              <p id="samExplResult" style="font-size: 13px;"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. DATA MANAGEMENT VIEW -->
+      <section id="view-data-management" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Persistent Storage & Data Lifecycle Management</h1>
+            <p class="view-subtitle">Manage CSV repository files, create automated backups, and verify database integrity</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <button class="btn btn-secondary" onclick="reloadData()">🔄 Reload from CSV Files</button>
+          <button class="btn btn-primary" onclick="saveData()">💾 Force Save to CSV Files</button>
+          <button class="btn btn-secondary" style="color: var(--olive-dark);" onclick="backupData()">📦 Create Timestamped Backup</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Persistent CSV Repositories Status</div>
+          <div class="table-wrapper">
+            <table id="dataStatusTable">
+              <thead>
+                <tr>
+                  <th>Database Entity</th>
+                  <th>File Name</th>
+                  <th>Absolute Disk Path</th>
+                  <th>Size (Bytes)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <!-- Product Modal -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="productModalTitle">Add New Product</div>
+        <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+      </div>
+      <form id="productForm" onsubmit="handleProductSubmit(event)">
+        <input type="hidden" id="pId">
+        <div class="form-group">
+          <label class="form-label">Product Name:</label>
+          <input type="text" id="pName" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category:</label>
+          <input type="text" id="pCategory" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Product Code:</label>
+          <input type="text" id="pCode" class="form-input" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Price (Rs.):</label>
+            <input type="number" step="0.01" id="pPrice" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stock Units:</label>
+            <input type="number" id="pStock" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rating (0.0 to 5.0):</label>
+          <input type="number" step="0.1" min="0" max="5" id="pRating" class="form-input" value="5.0" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description:</label>
+          <textarea id="pDesc" class="form-textarea" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Product to CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Customer Modal -->
+  <div id="customerModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="customerModalTitle">Add New Customer</div>
+        <button class="modal-close" onclick="closeModal('customerModal')">&times;</button>
+      </div>
+      <form id="customerForm" onsubmit="handleCustomerSubmit(event)">
+        <input type="hidden" id="cId">
+        <div class="form-group">
+          <label class="form-label">Customer Name:</label>
+          <input type="text" id="cName" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address:</label>
+          <input type="email" id="cEmail" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number:</label>
+          <input type="text" id="cPhone" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City / Address:</label>
+          <input type="text" id="cAddress" class="form-input" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Customer to CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Transaction Modal -->
+  <div id="transactionModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Record Retail Transaction</div>
+        <button class="modal-close" onclick="closeModal('transactionModal')">&times;</button>
+      </div>
+      <form id="transactionForm" onsubmit="handleTransactionSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Select Customer:</label>
+          <select id="tCustomer" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Product:</label>
+          <select id="tProduct" class="form-select" required onchange="calculateTransactionTotal()"></select>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Quantity:</label>
+            <input type="number" id="tQty" class="form-input" value="1" min="1" required oninput="calculateTransactionTotal()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Amount (Rs.):</label>
+            <input type="text" id="tTotal" class="form-input" readonly style="font-weight: 700; color: var(--olive-primary);">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transaction Date:</label>
+          <input type="date" id="tDate" class="form-input" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Record & Deduct Stock</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Warehouse Modal -->
+  <div id="warehouseModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="warehouseModalTitle">Add New Warehouse</div>
+        <button class="modal-close" onclick="closeModal('warehouseModal')">&times;</button>
+      </div>
+      <form id="warehouseForm" onsubmit="handleWarehouseSubmit(event)">
+        <input type="hidden" id="wId">
+        <div class="form-group">
+          <label class="form-label">Warehouse Name:</label>
+          <input type="text" id="wName" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location (City):</label>
+          <input type="text" id="wLocation" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Storage Capacity (Units):</label>
+          <input type="number" id="wCapacity" class="form-input" value="5000" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Warehouse to CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Submit Customer Review</div>
+        <button class="modal-close" onclick="closeModal('reviewModal')">&times;</button>
+      </div>
+      <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Product:</label>
+          <select id="rProduct" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reviewer (Customer):</label>
+          <select id="rCustomer" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rating (1 to 5 Stars):</label>
+          <select id="rRating" class="form-select">
+            <option value="5">★★★★★ (5 Stars - Excellent)</option>
+            <option value="4">★★★★☆ (4 Stars - Good)</option>
+            <option value="3">★★★☆☆ (3 Stars - Average)</option>
+            <option value="2">★★☆☆☆ (2 Stars - Poor)</option>
+            <option value="1">★☆☆☆☆ (1 Star - Terrible)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Customer Commentary:</label>
+          <textarea id="rText" class="form-textarea" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Review to CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

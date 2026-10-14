@@ -1,0 +1,9 @@
+customerId,name,email,phone,address
+201,Rahul,rahul@example.com,9000000001,Hyderabad
+202,Ananya,ananya@example.com,9000000002,Vijayawada
+203,Kiran,kiran@example.com,9000000003,Bengaluru
+204,Priya,priya@example.com,9000000004,Chennai
+205,Arjun,arjun@example.com,9000000005,Kochi
+206,Sneha,sneha@example.com,9000000006,Mumbai
+207,Vikram,vikram@example.com,9000000007,Delhi
+208,Meera,meera@example.com,9000000008,Pune

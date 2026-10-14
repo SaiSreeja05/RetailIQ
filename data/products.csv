@@ -1,0 +1,12 @@
+productId,name,category,description,price,stock,rating,productCode
+101,Apple iPhone 15,Electronics,Apple iPhone 15 with advanced camera and powerful performance,79999.0,20,4.5,IPH15-001
+102,Apple iPhone 15 Pro,Electronics,Apple iPhone 15 Pro with titanium design and advanced camera,119999.0,15,4.7,IPH15P-002
+103,Samsung Galaxy S25,Electronics,Samsung Galaxy smartphone with powerful processor and camera,79999.0,20,4.6,SAM25-003
+104,HP Pavilion Laptop,Computers,HP Pavilion laptop with high performance processor and large storage,64999.0,12,4.4,HPPAV-004
+105,Apple MacBook Air,Computers,Apple MacBook Air with powerful performance and long battery life,99999.0,10,4.8,MBAIR-005
+106,Sony Wireless Headphones,Audio,Sony wireless headphones with noise cancellation and long battery life,8999.0,35,4.5,SONYHP-006
+107,Logitech Wireless Mouse,Accessories,Logitech wireless mouse with comfortable design and accurate tracking,1499.0,50,4.3,LOGM-007
+108,Mechanical Gaming Keyboard,Accessories,Mechanical gaming keyboard with RGB lighting and fast response,3499.0,30,4.4,GAMEKB-008
+109,Dell 24 Inch Monitor,Computers,Dell monitor with full HD display and comfortable viewing,12999.0,18,4.5,DELL24-009
+110,Samsung Smart Watch,Wearables,Samsung smart watch with health tracking and activity monitoring,15999.0,22,4.2,SAMWATCH-010
+111,abc,audio,,20000.0,50,3.5,12345
