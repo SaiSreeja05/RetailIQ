@@ -1,9 +1,7 @@
 package DynamicProgramming;
 
 public class BitmaskDP {
-
     public static int maxValue(int[] prices, int[] values, int budget) {
-
         int n = prices.length;
         int totalMasks = 1 << n;
 

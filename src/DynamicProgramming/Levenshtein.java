@@ -6,7 +6,6 @@ public class Levenshtein {
 
         int n = first.length();
         int m = second.length();
-
         int[][] dp = new int[n + 1][m + 1];
 
         for (int i = 0; i <= n; i++) {

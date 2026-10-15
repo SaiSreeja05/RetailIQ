@@ -1,6 +1,10 @@
 package StringAlgorithms;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 public class KeywordMatcher {
 
@@ -10,7 +14,6 @@ public class KeywordMatcher {
         Node failure;
         ArrayList<String> words = new ArrayList<>();
     }
-
     private Node root;
 
     public KeywordMatcher() {

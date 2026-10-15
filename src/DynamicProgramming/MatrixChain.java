@@ -7,7 +7,6 @@ public class MatrixChain {
         int n = dimensions.length;
 
         int[][] dp = new int[n][n];
-
         for (int length = 2; length < n; length++) {
 
             for (int i = 1; i < n - length + 1; i++) {

@@ -10,7 +10,6 @@ public class RabinKarp {
         if (m == 0) {
             return 0;
         }
-
         if (m > n) {
             return -1;
         }
